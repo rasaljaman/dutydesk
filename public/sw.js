@@ -30,6 +30,11 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Skip non-http/https protocol requests (e.g. chrome-extension, data, etc.)
+  if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
   // Skip non-GET and Supabase API calls (always network)
   if (request.method !== 'GET' || url.hostname.includes('supabase.co')) {
     return;
@@ -47,13 +52,17 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(request)
       .then((response) => {
-        if (response.ok) {
+        if (response.ok && response.status === 200) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         }
         return response;
       })
-      .catch(() => caches.match('/index.html'))
+      .catch(() => {
+        if (request.mode === 'navigate') {
+          return caches.match('/index.html');
+        }
+      })
   );
 });
 

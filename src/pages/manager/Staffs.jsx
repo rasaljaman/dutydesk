@@ -48,6 +48,7 @@ export default function ManagerStaffs() {
         email: addForm.email,
         password: addForm.tempPassword,
         options: {
+          emailRedirectTo: `${window.location.origin}/verify`,
           data: {
             name: addForm.name,
             username: addForm.username,
