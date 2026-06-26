@@ -14,6 +14,16 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const handleInvitePrompt = () => {
+    const link = window.prompt('Please paste your invite link or code:')
+    if (!link) return
+    let token = link
+    if (link.includes('/join/')) {
+      token = link.split('/join/')[1].split('?')[0]
+    }
+    navigate(`/join/${token}`)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!identifier || !password) return toast.error('Please fill in all fields')
@@ -82,6 +92,14 @@ export default function LoginPage() {
 
         <button type="submit" disabled={loading} className="btn-primary mt-2">
           {loading ? <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Sign in'}
+        </button>
+        
+        <button 
+          type="button" 
+          onClick={handleInvitePrompt} 
+          className="w-full text-center text-primary-600 font-medium text-body-md hover:underline mt-2"
+        >
+          Have an invite link? Open it to join a brand.
         </button>
       </form>
 
