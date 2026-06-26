@@ -11,6 +11,7 @@ import { useSchedule } from '../../hooks/useSchedule'
 import { useRealtime } from '../../hooks/useRealtime'
 import { useBrand } from '../../context/BrandContext'
 import { useAuth } from '../../context/AuthContext'
+import { supabase } from '../../lib/supabase'
 
 export function OpenShiftsView() {
   const { user } = useAuth()
@@ -28,7 +29,7 @@ export function OpenShiftsView() {
   
   // Realtime slots for the dropdown
   const [slots, setSlots] = useState([])
-  const { supabase } = useRealtime({ 
+  useRealtime({ 
     onOpenShiftChange: () => getOpenShifts(currentBrand.id) 
   })
 

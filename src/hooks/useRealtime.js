@@ -11,7 +11,10 @@ export function useRealtime({ onScheduleChange, onLeaveChange, onSwapChange, onN
   useEffect(() => {
     if (!currentBrand || !user) return
 
-    const channel = supabase.channel(`brand-${currentBrand.id}`)
+    // Generate a unique channel name for this specific hook instance to prevent
+    // "cannot add postgres_changes callbacks... after subscribe()" error
+    const uniqueId = Math.random().toString(36).substring(7)
+    const channel = supabase.channel(`brand-${currentBrand.id}-${uniqueId}`)
 
     if (onScheduleChange) {
       channel.on('postgres_changes', { event: '*', schema: 'public', table: 'schedule', filter: `brand_id=eq.${currentBrand.id}` }, onScheduleChange)
