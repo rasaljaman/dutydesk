@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #F9F9FF;
+    color: #151C27;
+    min-height: 100dvh;
+    overscroll-behavior: none;
+  }
+
+  #root {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Safe area insets for notch/home indicator */
+  .safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 16px);
+  }
+  .safe-top {
+    padding-top: max(env(safe-area-inset-top), 0px);
+  }
+}
+
+@layer components {
+  /* Skeleton shimmer */
+  .skeleton {
+    @apply bg-gray-200 rounded animate-pulse;
+  }
+
+  /* Bottom sheet drag handle */
+  .drag-handle {
+    @apply w-8 h-1 bg-outline-variant rounded-full mx-auto mb-4;
+  }
+
+  /* Bottom nav active indicator */
+  .nav-active {
+    @apply text-primary-500 font-semibold;
+  }
+  .nav-inactive {
+    @apply text-gray-400;
+  }
+
+  /* Shift badge */
+  .shift-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-white text-label-md font-medium;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-white rounded-lg border border-outline-variant shadow-card p-4;
+  }
+
+  /* Input base */
+  .input-base {
+    @apply w-full bg-white border border-outline-variant rounded-md px-4 py-3 text-body-lg text-on-surface placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    @apply w-full flex items-center justify-center gap-2 bg-primary-500 text-white font-semibold rounded-md py-3 px-6 text-body-lg transition-all active:scale-[0.98] hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Secondary button */
+  .btn-secondary {
+    @apply w-full flex items-center justify-center gap-2 bg-white text-primary-500 font-semibold rounded-md py-3 px-6 text-body-lg border border-primary-500 transition-all active:scale-[0.98] hover:bg-primary-50 disabled:opacity-50;
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply flex items-center justify-center gap-2 text-primary-500 font-medium rounded-md py-2 px-4 text-body-md transition-all active:bg-primary-50 hover:bg-primary-50;
+  }
+
+  /* Status chip */
+  .chip {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-label-md font-semibold;
+  }
+  .chip-pending { @apply chip bg-amber-100 text-amber-700; }
+  .chip-active  { @apply chip bg-emerald-100 text-emerald-700; }
+  .chip-rejected { @apply chip bg-red-100 text-red-700; }
+  .chip-filled  { @apply chip bg-indigo-100 text-indigo-700; }
+}
+
+/* Scrollbar hidden utility */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
