@@ -41,7 +41,7 @@ export default function DashboardPage() {
     setLoading(true)
     const [scheduleData, membersData, confData, notesData] = await Promise.all([
       fetchSchedule(today, today),
-      supabase.from('brand_members').select('*, profiles(id, name, username, avatar_url)').eq('brand_id', brandId).eq('is_active', true),
+      supabase.from('brand_members').select('*, profiles!brand_members_user_id_fkey(id, name, username, avatar_url)').eq('brand_id', brandId).eq('is_active', true),
       getConfirmations(brandId),
       getRecentNotes(5)
     ])

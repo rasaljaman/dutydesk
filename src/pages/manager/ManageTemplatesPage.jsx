@@ -30,7 +30,7 @@ export default function ManageTemplatesPage() {
 
   const fetchFormData = async () => {
     const [staffRes, slotsRes] = await Promise.all([
-      supabase.from('brand_members').select('user_id, profiles(name, avatar_url)').eq('brand_id', brandId).eq('is_active', true),
+      supabase.from('brand_members').select('user_id, profiles!brand_members_user_id_fkey(name, avatar_url)').eq('brand_id', brandId).eq('is_active', true),
       supabase.from('shift_slots').select('*').eq('brand_id', brandId).order('start_time')
     ])
     if (staffRes.data) setStaff(staffRes.data)

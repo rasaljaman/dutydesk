@@ -24,7 +24,7 @@ export default function ManageDefaultsPage() {
     setLoading(true)
     const [d, m, s] = await Promise.all([
       supabase.from('default_assignments').select('*, profiles(id, name, username, avatar_url), shift_slots(*)').eq('brand_id', brandId),
-      supabase.from('brand_members').select('*, profiles(id, name, username, avatar_url)').eq('brand_id', brandId).eq('is_active', true),
+      supabase.from('brand_members').select('*, profiles!brand_members_user_id_fkey(id, name, username, avatar_url)').eq('brand_id', brandId).eq('is_active', true),
       supabase.from('shift_slots').select('*').eq('brand_id', brandId).order('start_time'),
     ])
     setDefaults(d.data ?? [])

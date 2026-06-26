@@ -43,7 +43,7 @@ export default function ManageSchedulePage() {
     setLoading(true)
     const [schedData, membersData, slotsData, defaultsData] = await Promise.all([
       supabase.from('schedule').select('*, profiles(id, name, username, avatar_url), shift_slots(*)').eq('brand_id', brandId).eq('status', 'active').gte('date', weekStart).lte('date', weekEnd).order('date'),
-      supabase.from('brand_members').select('*, profiles(id, name, username, avatar_url)').eq('brand_id', brandId).eq('is_active', true),
+      supabase.from('brand_members').select('*, profiles!brand_members_user_id_fkey(id, name, username, avatar_url)').eq('brand_id', brandId).eq('is_active', true),
       supabase.from('shift_slots').select('*').eq('brand_id', brandId).order('start_time'),
       supabase.from('default_assignments').select('*, profiles(id, name, username, avatar_url), shift_slots(*)').eq('brand_id', brandId),
     ])

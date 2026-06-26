@@ -28,7 +28,7 @@ export default function ChatListPage() {
     setLoadingMembers(true)
     const { data } = await supabase
       .from('brand_members')
-      .select('user_id, profiles(name, avatar_url, username)')
+      .select('user_id, profiles!brand_members_user_id_fkey(name, avatar_url, username)')
       .eq('brand_id', brandId)
       .eq('is_active', true)
       .neq('user_id', profile.id)

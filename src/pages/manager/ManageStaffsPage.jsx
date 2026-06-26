@@ -19,7 +19,7 @@ export default function ManageStaffsPage() {
 
   const fetchMembers = async () => {
     setLoading(true)
-    const { data } = await supabase.from('brand_members').select('*, profiles(id, name, username, email, avatar_url)').eq('brand_id', brandId).eq('is_active', true).order('joined_at')
+    const { data } = await supabase.from('brand_members').select('*, profiles!brand_members_user_id_fkey(id, name, username, email, avatar_url)').eq('brand_id', brandId).eq('is_active', true).order('joined_at')
     setMembers(data ?? [])
     setLoading(false)
   }
