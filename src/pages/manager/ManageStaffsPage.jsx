@@ -50,7 +50,6 @@ export default function ManageStaffsPage() {
     { to: `/${brandId}/manage/templates`, icon: Layers, label: 'Templates', color: 'bg-blue-50 text-blue-600' },
     { to: `/${brandId}/manage/analytics`, icon: BarChart3, label: 'Analytics', color: 'bg-indigo-50 text-indigo-600' },
     { to: `/${brandId}/manage/special-days`, icon: Star, label: 'Special Days', color: 'bg-amber-50 text-amber-600' },
-    { to: `/${brandId}/manage/invite`, icon: Link2, label: 'Invites', color: 'bg-violet-50 text-violet-600' },
     { to: `/${brandId}/manage/settings`, icon: Settings, label: 'Settings', color: 'bg-gray-100 text-gray-600' },
   ]
 
@@ -61,8 +60,8 @@ export default function ManageStaffsPage() {
           <button onClick={() => navigate(`/${brandId}`)} className="p-1 -ml-1 text-on-surface-variant"><ChevronLeft className="w-5 h-5" /></button>
           <h1 className="flex-1 text-title-lg font-semibold text-on-surface">Manage</h1>
           <span className="chip chip-active mr-1">{members.length}</span>
-          <button onClick={() => navigate(`/${brandId}/manage/invite`)} className="btn-primary py-1 px-3 text-body-md font-semibold gap-1.5 h-9 rounded-lg flex items-center shadow-sm">
-            <UserPlus className="w-4 h-4" /> Invite
+          <button onClick={() => navigate(`/${brandId}/manage/add-staff`)} className="btn-primary py-1 px-3 text-body-md font-semibold gap-1.5 h-9 rounded-lg flex items-center shadow-sm">
+            <UserPlus className="w-4 h-4" /> Add Staff
           </button>
         </div>
       </header>
@@ -83,16 +82,24 @@ export default function ManageStaffsPage() {
         {/* Staff list */}
         <h3 className="text-title-lg text-on-surface">Staff Members</h3>
         {loading ? <LoadingSkeleton rows={4} /> : members.length === 0 ? (
-          <EmptyState icon={Users} title="No staff yet" description="Invite staff via the invite link." />
+          <EmptyState icon={Users} title="No staff yet" description="Add staff members to your team." />
         ) : members.map(member => (
-          <div key={member.id} className="card flex items-center gap-3">
-            <Avatar name={member.profiles?.name} avatarUrl={member.profiles?.avatar_url} size="md" />
-            <div className="flex-1 min-w-0">
-              <p className="text-body-lg font-semibold text-on-surface truncate">{member.profiles?.name}</p>
-              <p className="text-body-md text-on-surface-variant">@{member.profiles?.username}</p>
+          <div key={member.id} className="card flex flex-col gap-2 relative">
+            <div className="absolute top-3 right-3 flex items-center gap-2">
+               {member.profiles?.must_change_password && <span className="chip bg-amber-100 text-amber-700 border-none text-[10px] px-1.5 py-0.5">Setup Pending</span>}
+               {(!member.profiles?.email_verified && member.profiles?.added_to_brand_directly) && <span className="chip bg-surface-variant text-on-surface-variant border-none text-[10px] px-1.5 py-0.5">Unverified</span>}
+               <button onClick={() => setSelected(member)} className="p-1.5 text-outline hover:text-on-surface hover:bg-surface-container rounded-lg"><MoreVertical className="w-4 h-4" /></button>
             </div>
-            <span className={`chip ${roleColors[member.role]}`}>{member.role}</span>
-            <button onClick={() => setSelected(member)} className="p-2 text-outline hover:text-on-surface hover:bg-surface-container rounded-lg"><MoreVertical className="w-4 h-4" /></button>
+            <div className="flex items-center gap-3 pr-16">
+              <Avatar name={member.profiles?.name} avatarUrl={member.profiles?.avatar_url} size="md" />
+              <div className="flex-1 min-w-0">
+                <p className="text-body-lg font-semibold text-on-surface truncate">{member.profiles?.name}</p>
+                <p className="text-body-md text-on-surface-variant">@{member.profiles?.username}</p>
+              </div>
+            </div>
+            <div className="mt-1">
+              <span className={`chip ${roleColors[member.role]}`}>{member.role}</span>
+            </div>
           </div>
         ))}
       </div>

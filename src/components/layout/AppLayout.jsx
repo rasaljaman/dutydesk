@@ -2,12 +2,14 @@ import { NavLink, useParams, useNavigate } from 'react-router-dom'
 import { Home, Calendar, ArrowLeftRight, Bell, User, ChevronLeft, Settings, MessageSquare } from 'lucide-react'
 import { useNotifications } from '../../context/NotificationContext'
 import { useBrand } from '../../context/BrandContext'
+import { useAuth } from '../../context/AuthContext'
 
 export function AppLayout({ children, title, showBack, rightAction }) {
   const { brandId } = useParams()
   const navigate = useNavigate()
   const { unreadCount } = useNotifications() || {}
   const { isManager, brandSettings } = useBrand()
+  const { profile } = useAuth()
 
   const navItems = [
     { to: `/${brandId}`, icon: Home, label: 'Home', end: true },
@@ -39,6 +41,15 @@ export function AppLayout({ children, title, showBack, rightAction }) {
           {rightAction}
         </div>
       </header>
+
+      {(!profile?.email_verified && profile?.added_to_brand_directly) && (
+        <div className="bg-amber-50 px-4 py-2 border-b border-amber-100 flex items-center justify-between">
+          <p className="text-label-sm text-amber-900">Your email is unverified.</p>
+          <button onClick={() => navigate('/verify-email')} className="text-label-sm font-semibold text-amber-700 hover:underline">
+            Verify Now
+          </button>
+        </div>
+      )}
 
       {/* Content */}
       <main className="flex-1 overflow-y-auto pb-24">

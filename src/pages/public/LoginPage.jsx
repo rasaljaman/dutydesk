@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Clock, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
+import { supabase } from '../../lib/supabase'
 
 export default function LoginPage() {
   const { signIn } = useAuth()
@@ -14,23 +15,21 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const handleInvitePrompt = () => {
-    const link = window.prompt('Please paste your invite link or code:')
-    if (!link) return
-    let token = link
-    if (link.includes('/join/')) {
-      token = link.split('/join/')[1].split('?')[0]
-    }
-    navigate(`/join/${token}`)
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!identifier || !password) return toast.error('Please fill in all fields')
     setLoading(true)
     try {
-      await signIn({ identifier: identifier.trim(), password })
-      navigate(redirect || '/brands')
+      const { user } = await signIn({ identifier: identifier.trim(), password })
+      // Fetch profile to check if password change is required
+      const { data: profile } = await supabase.from('profiles').select('must_change_password').eq('id', user.id).single()
+      
+      if (profile?.must_change_password) {
+        navigate('/change-password')
+      } else {
+        navigate(redirect || '/brands')
+      }
     } catch (err) {
       toast.error(err.message || 'Login failed')
     } finally {
@@ -90,16 +89,8 @@ export default function LoginPage() {
           <Link to="/forgot-password" className="text-primary-500 text-body-md font-medium">Forgot password?</Link>
         </div>
 
-        <button type="submit" disabled={loading} className="btn-primary mt-2">
+        <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
           {loading ? <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Sign in'}
-        </button>
-        
-        <button 
-          type="button" 
-          onClick={handleInvitePrompt} 
-          className="w-full text-center text-primary-600 font-medium text-body-md hover:underline mt-2"
-        >
-          Have an invite link? Open it to join a brand.
         </button>
       </form>
 

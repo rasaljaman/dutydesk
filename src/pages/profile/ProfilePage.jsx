@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { User, Mail, Phone, AtSign, LogOut, Edit2, Check, X } from 'lucide-react'
+import { User, Mail, Phone, AtSign, LogOut, Edit2, Check, X, Lock, Shield } from 'lucide-react'
 import { AppLayout } from '../../components/layout/AppLayout'
 import { Avatar } from '../../components/ui/Avatar'
+import { Modal } from '../../components/ui/Modal'
 import { useAuth } from '../../context/AuthContext'
 import { useBrand } from '../../context/BrandContext'
 import { Camera } from 'lucide-react'
@@ -15,6 +16,37 @@ export default function ProfilePage() {
   const [form, setForm] = useState({ name: profile?.name || '', phone: profile?.phone || '', bio: profile?.bio || '' })
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [showSecurity, setShowSecurity] = useState(false)
+  const [securityForm, setSecurityForm] = useState({ oldPassword: '', newPassword: '' })
+  const [securityLoading, setSecurityLoading] = useState(false)
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault()
+    if (!securityForm.newPassword || securityForm.newPassword.length < 8) {
+      return toast.error('New password must be at least 8 characters')
+    }
+    setSecurityLoading(true)
+    try {
+      // Re-authenticate with old password to verify
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: securityForm.oldPassword
+      })
+      if (signInErr) throw new Error('Incorrect current password')
+
+      // Update password
+      const { error: updateErr } = await supabase.auth.updateUser({ password: securityForm.newPassword })
+      if (updateErr) throw updateErr
+
+      toast.success('Password updated successfully')
+      setShowSecurity(false)
+      setSecurityForm({ oldPassword: '', newPassword: '' })
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+      setSecurityLoading(false)
+    }
+  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -124,6 +156,37 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        {/* Security Info */}
+        <div className="card space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-title-lg text-on-surface">Security</h3>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Lock className="w-5 h-5 text-outline flex-shrink-0" />
+                <div>
+                  <p className="text-label-md text-on-surface-variant">Password</p>
+                  <p className="text-body-lg text-on-surface">••••••••</p>
+                </div>
+              </div>
+              <button onClick={() => setShowSecurity(true)} className="btn-secondary py-1.5 px-3 text-body-md">Change</button>
+            </div>
+            {(!profile?.email_verified && profile?.added_to_brand_directly) && (
+              <div className="flex items-center justify-between pt-2 border-t border-outline-variant">
+                <div className="flex items-center gap-3">
+                  <Shield className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-label-md text-on-surface-variant">Email Verification</p>
+                    <p className="text-body-sm text-amber-600 font-medium">Unverified</p>
+                  </div>
+                </div>
+                <button onClick={() => window.location.href = '/verify-email'} className="btn-secondary py-1.5 px-3 text-body-md text-amber-700 border-amber-300">Verify</button>
+              </div>
+            )}
+          </div>
+        </div>
+
         {brandSettings?.enable_availability && (
           <div className="card">
             <h3 className="text-title-lg text-on-surface mb-2">My Availability</h3>
@@ -145,6 +208,37 @@ export default function ProfilePage() {
           <LogOut className="w-5 h-5" /> Sign Out
         </button>
       </div>
+
+      <Modal isOpen={showSecurity} onClose={() => setShowSecurity(false)} title="Change Password">
+        <form onSubmit={handleUpdatePassword} className="space-y-4">
+          <div>
+            <label className="block text-label-md font-medium text-on-surface mb-2">Current Password</label>
+            <input 
+              type="password" 
+              value={securityForm.oldPassword} 
+              onChange={e => setSecurityForm(p => ({ ...p, oldPassword: e.target.value }))} 
+              className="input-base" 
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-label-md font-medium text-on-surface mb-2">New Password</label>
+            <input 
+              type="password" 
+              value={securityForm.newPassword} 
+              onChange={e => setSecurityForm(p => ({ ...p, newPassword: e.target.value }))} 
+              className="input-base" 
+              placeholder="Min. 8 characters"
+              required
+            />
+          </div>
+          <div className="pt-2">
+            <button type="submit" disabled={securityLoading} className="btn-primary w-full py-3">
+              {securityLoading ? 'Updating...' : 'Update Password'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </AppLayout>
   )
 }

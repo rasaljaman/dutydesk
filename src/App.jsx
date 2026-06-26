@@ -12,8 +12,8 @@ import LoginPage from './pages/public/LoginPage'
 import SignupPage from './pages/public/SignupPage'
 import ForgotPasswordPage from './pages/public/ForgotPasswordPage'
 import ResetPasswordPage from './pages/public/ResetPasswordPage'
-import JoinBrandPage from './pages/public/JoinBrandPage'
-
+import ChangePasswordPage from './pages/public/ChangePasswordPage'
+import VerifyEmailPage from './pages/public/VerifyEmailPage'
 // App pages
 import BrandSelectorPage from './pages/app/BrandSelectorPage'
 import CreateBrandPage from './pages/app/CreateBrandPage'
@@ -35,8 +35,8 @@ import AvailabilityPage from './pages/profile/AvailabilityPage'
 import ManageStaffsPage from './pages/manager/ManageStaffsPage'
 import ManageShiftsPage from './pages/manager/ManageShiftsPage'
 import ManageSpecialDaysPage from './pages/manager/ManageSpecialDaysPage'
-import InviteManagePage from './pages/manager/InviteManagePage'
 import BrandSettingsPage from './pages/manager/BrandSettingsPage'
+import AddStaffPage from './pages/manager/AddStaffPage'
 import ManageSchedulePage from './pages/manager/ManageSchedulePage'
 import ManageDefaultsPage from './pages/manager/ManageDefaultsPage'
 import ManageTemplatesPage from './pages/manager/ManageTemplatesPage'
@@ -64,7 +64,8 @@ export default function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
-              <Route path="/join/:token" element={<ProtectedRoute><JoinBrandPage /></ProtectedRoute>} />
+              <Route path="/change-password" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
+              <Route path="/verify-email" element={<ProtectedRoute><VerifyEmailPage /></ProtectedRoute>} />
 
               {/* App */}
               <Route path="/brands" element={<ProtectedRoute><BrandSelectorPage /></ProtectedRoute>} />
@@ -87,7 +88,7 @@ export default function App() {
               <Route path="/:brandId/manage/staffs" element={<ProtectedRoute><BrandRoute><ManagerRoute><ManageStaffsPage /></ManagerRoute></BrandRoute></ProtectedRoute>} />
               <Route path="/:brandId/manage/shifts" element={<ProtectedRoute><BrandRoute><ManagerRoute><ManageShiftsPage /></ManagerRoute></BrandRoute></ProtectedRoute>} />
               <Route path="/:brandId/manage/special-days" element={<ProtectedRoute><BrandRoute><ManagerRoute><ManageSpecialDaysPage /></ManagerRoute></BrandRoute></ProtectedRoute>} />
-              <Route path="/:brandId/manage/invite" element={<ProtectedRoute><BrandRoute><ManagerRoute><InviteManagePage /></ManagerRoute></BrandRoute></ProtectedRoute>} />
+              <Route path="/:brandId/manage/add-staff" element={<ProtectedRoute><BrandRoute><ManagerRoute><AddStaffPage /></ManagerRoute></BrandRoute></ProtectedRoute>} />
               <Route path="/:brandId/manage/settings" element={<ProtectedRoute><BrandRoute><ManagerRoute><BrandSettingsPage /></ManagerRoute></BrandRoute></ProtectedRoute>} />
               <Route path="/:brandId/manage/schedule" element={<ProtectedRoute><BrandRoute><ManagerRoute><ManageSchedulePage /></ManagerRoute></BrandRoute></ProtectedRoute>} />
               <Route path="/:brandId/manage/templates" element={<ProtectedRoute><BrandRoute><ManagerRoute><ManageTemplatesPage /></ManagerRoute></BrandRoute></ProtectedRoute>} />
