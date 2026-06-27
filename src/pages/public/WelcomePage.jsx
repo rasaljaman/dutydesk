@@ -59,9 +59,6 @@ export default function WelcomePage() {
         <Link to="/login" className="btn-secondary block text-center">
           I already have an account
         </Link>
-        <p className="text-label-md text-on-surface-variant text-center mt-2">
-          Have an invite link? Open it to join a brand.
-        </p>
       </div>
     </div>
   )

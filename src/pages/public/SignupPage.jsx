@@ -9,19 +9,9 @@ export default function SignupPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const redirect = searchParams.get('redirect')
-  const [form, setForm] = useState({ name: '', username: '', email: '', phone: '', password: '' })
+  const [form, setForm] = useState({ name: '', username: '', email: '', phone: '', password: '', confirmPassword: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-
-  const handleInvitePrompt = () => {
-    const link = window.prompt('Please paste your invite link or code:')
-    if (!link) return
-    let token = link
-    if (link.includes('/join/')) {
-      token = link.split('/join/')[1].split('?')[0]
-    }
-    navigate(`/join/${token}`)
-  }
 
   const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }))
 
@@ -29,6 +19,7 @@ export default function SignupPage() {
     e.preventDefault()
     if (!form.name || !form.username || !form.email || !form.password) return toast.error('Name, username, email, and password are required')
     if (form.password.length < 8) return toast.error('Password must be at least 8 characters')
+    if (form.password !== form.confirmPassword) return toast.error('Passwords do not match')
     setLoading(true)
     try {
       await signUp({ email: form.email, phone: form.phone || undefined, password: form.password, name: form.name, username: form.username.toLowerCase().replace(/\s/g, '_') })
@@ -84,16 +75,12 @@ export default function SignupPage() {
             </button>
           </div>
         </div>
+        <div>
+          <label className="block text-label-md font-medium text-on-surface mb-2">Confirm Password *</label>
+          <input type={showPassword ? 'text' : 'password'} value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)} placeholder="Confirm password" className="input-base" autoComplete="new-password" />
+        </div>
         <button type="submit" disabled={loading} className="btn-primary mt-2">
           {loading ? <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Create Account'}
-        </button>
-
-        <button 
-          type="button" 
-          onClick={handleInvitePrompt} 
-          className="w-full text-center text-primary-600 font-medium text-body-md hover:underline mt-2"
-        >
-          Have an invite link? Open it to join a brand.
         </button>
       </form>
 
