@@ -23,11 +23,12 @@ export function useHandoverNotes(brandId) {
   }, [brandId])
 
   // Get note for a specific shift
-  const getNoteForShift = useCallback(async (scheduleId) => {
+  const getNoteForShift = useCallback(async (date, slotId) => {
     const { data, error } = await supabase
       .from('handover_notes')
       .select('*')
-      .eq('schedule_id', scheduleId)
+      .eq('date', date)
+      .eq('slot_id', slotId)
       .maybeSingle()
       
     if (error) throw error
@@ -35,9 +36,9 @@ export function useHandoverNotes(brandId) {
   }, [])
 
   // Save or update a note
-  const saveNote = async (scheduleId, authorId, content) => {
+  const saveNote = async (date, slotId, authorId, content) => {
     // Check if it already exists
-    const existing = await getNoteForShift(scheduleId)
+    const existing = await getNoteForShift(date, slotId)
     
     if (existing) {
       const { data, error } = await supabase
@@ -53,8 +54,9 @@ export function useHandoverNotes(brandId) {
         .from('handover_notes')
         .insert({
           brand_id: brandId,
-          schedule_id: scheduleId,
-          author_id: authorId,
+          date,
+          slot_id: slotId,
+          written_by: authorId,
           content
         })
         .select()

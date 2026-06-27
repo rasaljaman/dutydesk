@@ -53,7 +53,7 @@ export default function DashboardPage() {
     setRecentNotes(notesData)
     
     if (myCurrentShift) {
-      const shiftNote = await getNoteForShift(myCurrentShift.id)
+      const shiftNote = await getNoteForShift(myCurrentShift.date, myCurrentShift.slot_id)
       if (shiftNote) setMyNote(shiftNote.content)
     }
     
@@ -158,7 +158,7 @@ export default function DashboardPage() {
                     onClick={async () => {
                       setSavingNote(true)
                       try {
-                        await saveNote(myShift.id, profile.id, myNote)
+                        await saveNote(myShift.date, myShift.slot_id, profile.id, myNote)
                         setIsEditingNote(false)
                         const notesData = await getRecentNotes(5)
                         setRecentNotes(notesData)
